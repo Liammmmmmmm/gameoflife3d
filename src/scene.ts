@@ -95,7 +95,7 @@ function init() {
 
   // ===== 📦 OBJECTS =====
   {
-    const sideLength = 1
+    const sideLength = 0.2
     const cubeGeometry = new BoxGeometry(sideLength, sideLength, sideLength)
     const cubeMaterial = new MeshStandardMaterial({
       color: '#f69f1f',
@@ -266,8 +266,7 @@ function animate() {
   stats.update()
 
   if (animation.enabled && animation.play) {
-    animations.rotate(cube, clock, Math.PI / 3)
-    animations.bounce(cube, clock, 1, 0.5, 0.5)
+   
   }
 
   if (resizeRendererToDisplaySize(renderer)) {
