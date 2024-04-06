@@ -1,15 +1,26 @@
 const gridSize = 40
 const hiddenBorder = 5
 
+let customGrid = true
+
+import { gridCustom } from './customGrid'
+
 export let fullRenderSize = gridSize
 let fullGridSize = gridSize + hiddenBorder*2;
 
 let grid = new Array(fullGridSize).fill(null).map(() => new Array(fullGridSize).fill(0));
-for (let i = 0; i < fullGridSize; i++) {
-    for (let j = 0; j < fullGridSize; j++) {
-        grid[i][j] = Math.random() > 0.5 ? 1 : 0; // 50% de chance d'être vivante
+
+if(customGrid) {
+    grid = gridCustom
+} else {
+    for (let i = 0; i < fullGridSize; i++) {
+        for (let j = 0; j < fullGridSize; j++) {
+            grid[i][j] = Math.random() > 0.5 ? 1 : 0; // 50% de chance d'être vivante
+        }
     }
 }
+
+
 
 function updateGrid() {
     let newGrid = new Array(fullGridSize).fill(null).map(() => new Array(fullGridSize).fill(0));

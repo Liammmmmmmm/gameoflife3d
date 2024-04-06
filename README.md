@@ -1,72 +1,11 @@
-# Three.js Vite Template with TypeScript
+# Jeu de la vie
 
-Three.js + Vite + TypeScript starter
+Jeu de la vie avec threejs : l'axe de la hauteur montre les différentes générations se supperposants.
 
-- [Demo](https://vite-threejs-ts-template.vercel.app/)
-- [Jump to CLI commands](#cli-commands)
+Idée issue de cette vidéo [Instagram](https://www.instagram.com/p/C2hoRnFsmQW)
 
-## Copy (clone without git history)
+Le résultat ne peut pas être aussi smooth que dans la video car on a ici un rendu en instentané et non un rendu 3d mis en vidéo.
 
-```shell
-npx degit pachoclo/vite-threejs-ts-template threejs-project
-```
+Le projet est quand même sympa à regarder, n'hesitez pas à tester.
 
----
-<img width="796" alt="screenshot" src="https://github.com/pachoclo/vite-threejs-ts-template/assets/3608140/4b377045-8be5-4021-8cb8-84346a23f680">
----
 
-## Stuff included in the `scene.ts`
-
-- [x] Geometry
-- [x] Material
-- [x] Mesh
-- [x] Ambient Light
-- [x] Point Light
-- [x] Camera
-- [x] Scene
-- [x] Canvas
-- [x] Renderer (WebGL)
-- [x] Loading Manager
-- [x] Orbit Controls
-- [x] Drag Controls
-- [x] Grid
-- [x] Antialias enabled
-- [x] Transparent canvas
-- [x] Responsive renderer and camera (to canvas size)
-- [x] Animation Loop
-- [x] Shadows
-- [x] Stats (FPS, ms)
-- [x] Full screen (double-click on canvas)
-- [x] Debug GUI
-
-## Tech Stack
-
-- Three.js
-- TypeScript
-- Vite
-
-## CLI Commands
-
-Installation
-
-```bash
-npm i
-```
-
-Run dev mode
-
-```bash
-npm run dev
-```
-
-Build
-
-```bash
-npm run build
-```
-
-Run build
-
-```bash
-npm run preview
-```

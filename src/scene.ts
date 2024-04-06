@@ -3,6 +3,7 @@ import {
   AmbientLight,
   AxesHelper,
   BoxGeometry,
+  Color,
   //Clock,
   GridHelper,
   LoadingManager,
@@ -65,6 +66,8 @@ function addGeneration() {
   getGrid().forEach(row => {
     cubez++;
     cubex = -fullRenderSize/2 - 0.5;
+    
+    const cubeNames: number[] = []
     row.forEach((column) => {
       cubex++;
       if(column == 1) {
@@ -74,10 +77,38 @@ function addGeneration() {
         cubelife.position.y = 0.5 + generation;
         cubelife.position.x = cubex;
         cubelife.position.z = cubez;
+
+        //renderer.renderLists.dispose();
+        //const dateNow = `cube-${Date.now().toString()}`
+
+        //cubelife.name = dateNow
+        cubeNames.push(cubelife.id)
+        
+
         scene.add(cubelife)
-        console.log("cube " + cubez + " " + cubex)
+
+        
+
+        // setTimeout(() => {
+        //   //cubelife.removeFromParent()
+        //   // cubelife.geometry.dispose();
+        //   // scene.remove( cubelife );
+        // }, 2)
       }
     })
+
+    setTimeout(() => {
+      cubeNames!.map((i) => {
+        const objI = scene.getObjectById(i)
+        if (objI) {
+          //objI.remove(self)
+
+
+          scene.remove(objI)
+
+        }
+      });
+    }, 800)
   })
   generation++;
   rectLight.position.y = rectLight.position.y + 1;
@@ -105,6 +136,7 @@ function init() {
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = PCFSoftShadowMap
     scene = new Scene()
+    //scene.background = new Color(0xffffff)
   }
 
   // ===== 👨🏻‍💼 LOADING MANAGER =====
@@ -246,7 +278,7 @@ function init() {
     pointLightHelper.visible = false
     scene.add(pointLightHelper)
 
-    const gridHelper = new GridHelper(40, 40, 'teal', 'darkgray')
+    const gridHelper = new GridHelper(fullRenderSize, fullRenderSize, 'teal', 'darkgray')
     gridHelper.position.y = -0.01
     scene.add(gridHelper)
   }
@@ -341,8 +373,10 @@ function animate() {
   cameraControls.update()
 
   renderer.render(scene, camera)
+
+  addGeneration()
 }
 
-setInterval(() => {
-  addGeneration()
-}, 100)
+// setInterval(() => {
+  //addGeneration()
+// }, 100)
