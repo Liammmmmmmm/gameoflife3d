@@ -3,7 +3,7 @@ import {
   AmbientLight,
   AxesHelper,
   BoxGeometry,
-  Clock,
+  //Clock,
   GridHelper,
   LoadingManager,
   Mesh,
@@ -16,14 +16,19 @@ import {
   PointLightHelper,
   Scene,
   WebGLRenderer,
+  RectAreaLight
 } from 'three'
 import { DragControls } from 'three/examples/jsm/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
-import * as animations from './helpers/animations'
+// import * as animations from './helpers/animations'
 import { toggleFullScreen } from './helpers/fullscreen'
 import { resizeRendererToDisplaySize } from './helpers/responsiveness'
 import './style.css'
+
+import { getGrid, fullRenderSize } from './gameoflife';
+
+//import gsap from 'gsap'
 
 const CANVAS_ID = 'scene'
 
@@ -39,9 +44,52 @@ let cameraControls: OrbitControls
 let dragControls: DragControls
 let axesHelper: AxesHelper
 let pointLightHelper: PointLightHelper
-let clock: Clock
+//let clock: Clock
 let stats: Stats
 let gui: GUI
+let generation: number = 0;
+let rectLight: RectAreaLight;
+
+const sideLength = 0.95
+const cubeGeometry = new BoxGeometry(sideLength, sideLength, sideLength)
+const cubeMaterial = new MeshStandardMaterial({
+  color: '#ffffff',
+  metalness: 0,
+  roughness: 1,
+})
+
+function addGeneration() {
+  let cubex = -fullRenderSize/2 - 0.5;
+  let cubez = -fullRenderSize/2 - 0.5;
+
+  getGrid().forEach(row => {
+    cubez++;
+    cubex = -fullRenderSize/2 - 0.5;
+    row.forEach((column) => {
+      cubex++;
+      if(column == 1) {
+        let cubelife: Mesh
+        cubelife = new Mesh(cubeGeometry, cubeMaterial)
+        cubelife.castShadow = true
+        cubelife.position.y = 0.5 + generation;
+        cubelife.position.x = cubex;
+        cubelife.position.z = cubez;
+        scene.add(cubelife)
+        console.log("cube " + cubez + " " + cubex)
+      }
+    })
+  })
+  generation++;
+  rectLight.position.y = rectLight.position.y + 1;
+
+  cube.position.y = cube.position.y + 1;
+  camera.position.y = camera.position.y + 1;
+  
+
+  // gsap.to(cube.position, {y: cube.position.y+1, duration: 0.1});
+  // gsap.to(camera.position, {y: camera.position.y+1, duration: 0.1});
+
+}
 
 const animation = { enabled: true, play: true }
 
@@ -81,31 +129,40 @@ function init() {
   // ===== 💡 LIGHTS =====
   {
     ambientLight = new AmbientLight('white', 0.4)
-    pointLight = new PointLight('white', 20, 100)
-    pointLight.position.set(-2, 2, 2)
+    pointLight = new PointLight('white', 100, 1000)
+    pointLight.position.set(25, 25, 0)
     pointLight.castShadow = true
-    pointLight.shadow.radius = 4
-    pointLight.shadow.camera.near = 0.5
+    pointLight.shadow.radius = 200
+    pointLight.shadow.camera.near = 100.5
     pointLight.shadow.camera.far = 4000
     pointLight.shadow.mapSize.width = 2048
     pointLight.shadow.mapSize.height = 2048
     scene.add(ambientLight)
     scene.add(pointLight)
+
+    const width = 40;
+    const height = 10000;
+    const intensity = 1;
+    rectLight = new RectAreaLight( 0xffffff, intensity,  width, height );
+    rectLight.position.set( 30, 5, 0 );
+    rectLight.lookAt( 0, 0, 0 );
+    scene.add( rectLight )
+
+
   }
 
-  // ===== 📦 OBJECTS =====
+  // ===== 📦 OBJECTS =====    
   {
-    const sideLength = 0.2
-    const cubeGeometry = new BoxGeometry(sideLength, sideLength, sideLength)
-    const cubeMaterial = new MeshStandardMaterial({
-      color: '#f69f1f',
-      metalness: 0.5,
-      roughness: 0.7,
+    const cubeMaterialCamera = new MeshStandardMaterial({
+      color: 'white',
+      side: 2,
+      transparent: true,
+      opacity: 0,
     })
-    cube = new Mesh(cubeGeometry, cubeMaterial)
+    cube = new Mesh(cubeGeometry, cubeMaterialCamera)
     cube.castShadow = true
-    cube.position.y = 0.5
-
+    cube.position.y = 8
+    
     const planeGeometry = new PlaneGeometry(3, 3)
     const planeMaterial = new MeshLambertMaterial({
       color: 'gray',
@@ -118,15 +175,18 @@ function init() {
     const plane = new Mesh(planeGeometry, planeMaterial)
     plane.rotateX(Math.PI / 2)
     plane.receiveShadow = true
-
-    scene.add(cube)
+  
+    
+   
+    
+    
     scene.add(plane)
   }
 
   // ===== 🎥 CAMERA =====
   {
-    camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100)
-    camera.position.set(2, 2, 5)
+    camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 200)
+    camera.position.set(32, 32, 50)
   }
 
   // ===== 🕹️ CONTROLS =====
@@ -186,14 +246,14 @@ function init() {
     pointLightHelper.visible = false
     scene.add(pointLightHelper)
 
-    const gridHelper = new GridHelper(20, 20, 'teal', 'darkgray')
+    const gridHelper = new GridHelper(40, 40, 'teal', 'darkgray')
     gridHelper.position.y = -0.01
     scene.add(gridHelper)
   }
 
   // ===== 📈 STATS & CLOCK =====
   {
-    clock = new Clock()
+    //clock = new Clock()
     stats = new Stats()
     document.body.appendChild(stats.dom)
   }
@@ -263,6 +323,8 @@ function init() {
 function animate() {
   requestAnimationFrame(animate)
 
+  //addGeneration()
+
   stats.update()
 
   if (animation.enabled && animation.play) {
@@ -275,7 +337,12 @@ function animate() {
     camera.updateProjectionMatrix()
   }
 
+  cameraControls.target = cube.position.clone()
   cameraControls.update()
 
   renderer.render(scene, camera)
 }
+
+setInterval(() => {
+  addGeneration()
+}, 100)

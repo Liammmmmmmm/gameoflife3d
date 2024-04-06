@@ -1,6 +1,7 @@
 const gridSize = 40
 const hiddenBorder = 5
 
+export let fullRenderSize = gridSize
 let fullGridSize = gridSize + hiddenBorder*2;
 
 let grid = new Array(fullGridSize).fill(null).map(() => new Array(fullGridSize).fill(0));
@@ -46,7 +47,16 @@ function countNeighbors(row: number, col: number) {
     return count;
 }
 
+export function getGrid() {
+    let newGrid = grid;
+    newGrid = grid.map(function(val) {
+        return val.slice(hiddenBorder, -hiddenBorder);
+    }).slice(hiddenBorder, -hiddenBorder);
+      
+    updateGrid()
 
+    return newGrid;
+}
 
 /*
 
